@@ -101,7 +101,7 @@ const DashboardSideBar = () => {
   };
 
   return (
-    <div className="bg-blue-900/95 w-15 md:min-w-52 md:max-w-52 lg:w-52 h-full md:h-1/2 sticky top-0 md:top-64 hidden md:block my-5 ">
+    <div className="bg-blue-900/95 w-15 md:min-w-52 md:max-w-52 lg:w-52 h-full md:h-1/2 sticky top-0 md:top-44 hidden md:block my-5 ">
       <Link href="/dashboard" onClick={() => handleTabClick("/dashboard")}>
         <div
           className={`py-3 md:px-4 rounded-t-sm flex items-center justify-center md:justify-start cursor-pointer ${
