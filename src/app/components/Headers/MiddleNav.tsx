@@ -120,7 +120,7 @@ const MiddleNav: React.FC = () => {
   return (
     <div>
       <nav className="flex items-center justify-between px-4 md:px-8 lg:px-16 xl:px-24 2xl:px-56 py-4 bg-blue-900">
-        <div className="flex items-center border border-purple-800">
+        <div className="flex items-center">
           <Link href="/" className="w-20">
             <Image
               src="/whitelogo1.png"
