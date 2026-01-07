@@ -120,7 +120,7 @@ const MiddleNav: React.FC = () => {
   return (
     <div>
       <nav className="flex items-center justify-between px-4 md:px-8 lg:px-16 xl:px-24 2xl:px-56 py-4 bg-blue-900">
-        <div className="flex items-center">
+        <div className="flex items-center justify-between w-20 h-10">
           <Link href="/">
             <Image
               src="/whitelogo1.png"
@@ -129,6 +129,7 @@ const MiddleNav: React.FC = () => {
               width={100}
               height={100}
               priority
+              className="w-full h-full object-cover"
             />
           </Link>
         </div>

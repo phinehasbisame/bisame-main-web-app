@@ -1,12 +1,21 @@
 "use client";
 
 import { useEffect, useRef, useCallback, memo } from "react";
-import { FaSearch, FaTimes, FaArrowLeft } from "react-icons/fa";
+import {
+  FaSearch,
+  FaTimes,
+  FaArrowLeft,
+  FaFire,
+  FaClock,
+} from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 import { ErrorMessage } from "./";
 import SearchSuggestions from "../SearchSuggestions";
 import { useSearchData } from "../hooks";
 import { SearchBarProps } from "../types";
 import usePopularData from "../hooks/usePopularData";
+import Button from "../../ui/Button";
+import { MdKeyboardArrowLeft } from "react-icons/md";
 
 interface MobileSearchModalProps extends Omit<SearchBarProps, "className"> {
   isOpen: boolean;
@@ -17,7 +26,7 @@ const MobileSearchModal: React.FC<MobileSearchModalProps> = ({
   isOpen,
   onClose,
   onSearchError,
-  placeholder = "Search for anything...",
+  placeholder = "Search products...",
   defaultLocation = "Ghana",
   navigateOnSearch = true,
 }) => {
@@ -150,133 +159,161 @@ const MobileSearchModal: React.FC<MobileSearchModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <>
-      {/* Backdrop */}
-      <div
-        className={`
-          fixed inset-0 bg-black/20 backdrop-blur-sm z-40
-          transition-opacity duration-300 ease-out
-          ${isOpen ? "opacity-100" : "opacity-0"}
-        `}
-        onClick={onClose}
-      />
-
-      {/* Modal */}
-      <div
-        ref={modalRef}
-        className={`
-          fixed top-0 left-0 right-0 bg-white shadow-2xl z-40
-          transform transition-all duration-300 ease-out
-          ${
-            isOpen ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
-          }
-        `}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-100">
-          <button
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-black/40 z-40"
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
-            aria-label="Close search"
+          />
+
+          {/* Modal */}
+          <motion.div
+            ref={modalRef}
+            initial={{ y: "-100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "-100%" }}
+            transition={{ type: "spring", damping: 30, stiffness: 300 }}
+            className="fixed top-0 left-0 right-0 bg-white z-50 shadow-xl max-h-[90vh] overflow-y-auto"
           >
-            <FaArrowLeft className="text-gray-600 text-lg" />
-          </button>
+            {/* Compact Header */}
+            <div className="flex items-center gap-3 p-4 border-b border-gray-100">
+              <button
+                onClick={onClose}
+                className="p-2 rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors"
+                aria-label="Close search"
+              >
+                <MdKeyboardArrowLeft size={30} className="text-gray-600 text-lg" />
+              </button>
 
-          <h2 className="text-lg font-semibold text-gray-800">Search</h2>
+              {/* Inline Search Bar */}
+              <form
+                id="mobile-search-form"
+                onSubmit={handleFormSubmit}
+                className="flex-1"
+              >
+                <div className="relative">
+                  <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                    <FaSearch className="text-gray-400 text-sm" />
+                  </div>
 
-          <button
-            onClick={onClose}
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
-            aria-label="Close search"
-          >
-            <FaTimes className="text-gray-600 text-lg" />
-          </button>
-        </div>
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => handleInputChange(e.target.value)}
+                    onKeyDown={handleKeyPress}
+                    placeholder={placeholder}
+                    disabled={isLoading}
+                    className={`
+                      w-full pl-10 pr-10 py-2.5 text-sm rounded-md bg-gray-50 text-gray-900
+                      placeholder:text-gray-500
+                      focus:outline-none focus:bg-white focus:ring-2 focus:ring-orange-500
+                      disabled:opacity-50 disabled:cursor-not-allowed
+                      transition-all duration-200
+                      ${error ? "ring-2 ring-red-500" : ""}
+                    `}
+                    aria-label="Search input"
+                  />
 
-        {/* Search Form */}
-        <div className="p-4">
-          <form
-            id="mobile-search-form"
-            onSubmit={handleFormSubmit}
-            className="relative"
-          >
-            <div className="relative">
-              <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                <FaSearch size={15} className="text-gray-400 text-lg" />
-              </div>
-
-              <input
-                ref={inputRef}
-                type="text"
-                value={searchTerm}
-                onChange={(e) => handleInputChange(e.target.value)}
-                onKeyDown={handleKeyPress}
-                placeholder={placeholder}
-                disabled={isLoading}
-                className={`
-                  w-full pl-12 pr-4 py-2 text-sm rounded-xl bg-gray-50 text-gray-800
-                  focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white
-                  disabled:opacity-50 disabled:cursor-not-allowed
-                  transition-all duration-200
-                  ${error ? "ring-2 ring-red-500" : ""}
-                `}
-                aria-label="Search input"
-              />
-
-              {/* Clear button */}
-              {searchTerm && (
-                <button
-                  type="button"
-                  onClick={handleClearInput}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 rounded-full hover:bg-gray-200 transition-colors duration-200"
-                  aria-label="Clear search"
-                >
-                  <FaTimes className="text-gray-400 text-sm" />
-                </button>
-              )}
+                  {/* Clear/Loading */}
+                  <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                    {isLoading ? (
+                      <div className="w-5 h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+                    ) : searchTerm ? (
+                      <button
+                        type="button"
+                        onClick={handleClearInput}
+                        className="p-1.5 rounded-full hover:bg-gray-200 transition-colors"
+                        aria-label="Clear search"
+                      >
+                        <FaTimes className="text-gray-500 text-xs" />
+                      </button>
+                    ) : null}
+                  </div>
+                </div>
+              </form>
+              {/* Search */}
+              <Button label="Search" styles="text-orange-500 text-sm font-medium" />
             </div>
 
-            <ErrorMessage error={error} />
-
-            {/* Search Suggestions */}
-            {isSuggestionsVisible && searchTerm && (
-              <div className="mt-4 hidden">
-                <SearchSuggestions
-                  query={searchTerm}
-                  isVisible={isSuggestionsVisible}
-                  onSuggestionClick={handleSuggestionClickWithClose}
-                  onClose={handleCloseSuggestions}
-                  className="rounded-xl shadow-lg border border-gray-100"
-                  maxSuggestions={8}
-                />
+            {/* Error Message */}
+            {error && (
+              <div className="px-4 pt-3">
+                <ErrorMessage error={error} />
               </div>
             )}
-          </form>
-        </div>
 
-        {/* Popular Searches */}
-        {!searchTerm && getData && (
-          <div className="px-4 pb-6">
-            <div className="space-y-3">
-              <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">
-                Popular Searches
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {getData.map((term: string) => (
-                  <button
-                    key={term}
-                    onClick={() => handlePopularSearchClick(term)}
-                    className="px-4 py-2 text-xs bg-gray-100 hover:bg-gray-200 rounded-full text-gray-700 transition-colors duration-200"
-                  >
-                    {term}
-                  </button>
-                ))}
-              </div>
+            {/* Content Area */}
+            <div className="px-4 pb-4">
+              {/* Search Suggestions */}
+              {isSuggestionsVisible && searchTerm && (
+                <div className="pt-2">
+                  <SearchSuggestions
+                    query={searchTerm}
+                    isVisible={isSuggestionsVisible}
+                    onSuggestionClick={handleSuggestionClickWithClose}
+                    onClose={handleCloseSuggestions}
+                    className="rounded-lg"
+                    maxSuggestions={8}
+                  />
+                </div>
+              )}
+
+              {/* Popular Searches */}
+              {!searchTerm && getData && getData.length > 0 && (
+                <div className="pt-4 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <FaFire className="text-orange-500 text-base" />
+                    <h3 className="text-sm font-semibold text-gray-900">
+                      Trending Now
+                    </h3>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {getData.map((term: string) => (
+                      <button
+                        key={term}
+                        onClick={() => handlePopularSearchClick(term)}
+                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-orange-50 hover:text-orange-600 active:bg-orange-100 rounded-full transition-all"
+                      >
+                        {term}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Recent Searches (placeholder) */}
+              {!searchTerm && (!getData || getData.length === 0) && (
+                <div className="pt-4 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <FaClock className="text-gray-400 text-base" />
+                    <h3 className="text-sm font-semibold text-gray-900">
+                      Recent Searches
+                    </h3>
+                  </div>
+
+                  <div className="text-center py-8">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-3">
+                      <FaSearch className="text-gray-400 text-xl" />
+                    </div>
+                    <p className="text-sm text-gray-500">
+                      Your recent searches will appear here
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        )}
-      </div>
-    </>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   );
 };
 

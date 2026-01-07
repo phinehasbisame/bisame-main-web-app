@@ -20,7 +20,7 @@ const quickLinks = [
 
 const Footer = () => {
   return (
-    <footer className="py-6 sm:py-8 md:py-10 bg-black text-gray-300 hidden md:block" role="contentinfo">
+    <footer className="py-6 sm:py-8 md:py-10 bg-black text-gray-300 " role="contentinfo">
       <div className="w-full mx-auto px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info Section */}
