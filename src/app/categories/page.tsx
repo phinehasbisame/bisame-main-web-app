@@ -5,6 +5,7 @@ import CategoryAdsCard from "../components/SellButton/CategoryAdsCard";
 import { Category, subCategories } from "../components/SellButton/constant";
 import { useRouter } from "next/navigation";
 import { BottomNavigation } from "../components/BottomNavigation";
+import MainMobileMenu from "@/components/ui/MainMobileMenu";
 
 const CategoriesPage: React.FC = () => {
   const router = useRouter();
@@ -43,7 +44,8 @@ const CategoriesPage: React.FC = () => {
           </p>
         </div>
       </main>
-      <BottomNavigation activeTab="categories" />
+      {/* <BottomNavigation activeTab="categories" /> */}
+      <MainMobileMenu />
     </div>
   );
 };

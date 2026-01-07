@@ -6,6 +6,7 @@ import TopMarketplaceDeals from "./components/Products/TopMarketplaceDeals/Marke
 import { BottomNavigation } from "./components/BottomNavigation";
 import LocalServices from "./components/Products/ExploreLocalServices/LocalServices";
 import LatestListings from "./components/Products/LatestListings/LatestListings";
+import MainMobileMenu from "@/components/ui/MainMobileMenu";
 
 export default function Home() {
   return (
@@ -17,7 +18,8 @@ export default function Home() {
       <LatestListings />
       <TrendingProducts />
       {/* <CategorySection /> */}
-      <BottomNavigation activeTab="home" /> 
+      {/* <BottomNavigation activeTab="home" />  */}
+      <MainMobileMenu />
     </>
   );
 }

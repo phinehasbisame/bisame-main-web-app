@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { dashboardOptions } from "./constants";
+import { mainOptions } from "@/app/components/Dashboard/constants";
 import { VscMenu, VscClose } from "react-icons/vsc";
 
-const MobileDashboardOptions = () => {
+const MainMobileMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   // Prevent body scroll
@@ -26,7 +26,6 @@ const MobileDashboardOptions = () => {
         />
       )}
 
-      {/* Bottom Sheet */}
       <div
         className={`
           fixed bottom-0 left-0 right-0 z-[70]
@@ -36,7 +35,6 @@ const MobileDashboardOptions = () => {
           ${isOpen ? "translate-y-0" : "translate-y-full"}
         `}
       >
-        {/* Drag Handle (Ecommerce-style polish) */}
         <div className="flex justify-center pt-3">
           <div className="h-1.5 w-12 rounded-full bg-gray-300" />
         </div>
@@ -46,7 +44,7 @@ const MobileDashboardOptions = () => {
           <div>
             <h2 className="text-lg font-semibold text-gray-900">Menu</h2>
             <p className="text-xs text-gray-500">
-              Manage your account & activities
+              Manage your app activities here
             </p>
           </div>
           <button
@@ -60,7 +58,7 @@ const MobileDashboardOptions = () => {
 
         {/* Menu Items */}
         <nav className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
-          {dashboardOptions.map(({ id, option, description, href, icon }) => (
+          {mainOptions.map(({ id, option, description, href, icon }) => (
             <Link
               key={id}
               href={href}
@@ -121,4 +119,4 @@ const MobileDashboardOptions = () => {
   );
 };
 
-export default MobileDashboardOptions;
+export default MainMobileMenu;

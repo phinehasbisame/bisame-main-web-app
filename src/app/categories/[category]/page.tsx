@@ -8,6 +8,7 @@ import {
   getFormattedCategory,
 } from "@/app/components/SubCategory/lib";
 import SubCategoryCards from "@/app/components/SubCategory/SubCategoryCards";
+import MainMobileMenu from "@/components/ui/MainMobileMenu";
 import { Loader2 } from "lucide-react";
 import { useParams } from "next/navigation";
 
@@ -95,7 +96,8 @@ const CategoryPage = () => {
           )}
         </div>
       </div>
-      <BottomNavigation activeTab="categories" />
+      {/* <BottomNavigation activeTab="categories" /> */}
+       <MainMobileMenu />
     </div>
   );
 };

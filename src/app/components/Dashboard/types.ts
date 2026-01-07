@@ -33,3 +33,12 @@ export interface DashboardOptions {
   href: string;
   icon: ReactNode;
 }
+
+
+export interface MainOptions {
+  id: number;
+  option: string;
+  description: string;
+  href: string;
+  icon: ReactNode;
+}

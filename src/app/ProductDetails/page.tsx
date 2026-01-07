@@ -4,6 +4,7 @@ import RelatedProducts from "@/app/components/ProductDetails/RelatedProducts/Rel
 import { Suspense } from "react";
 import { BottomNavigation } from "../components/BottomNavigation";
 import Loader from "../components/Loader/Loader";
+import MainMobileMenu from "@/components/ui/MainMobileMenu";
 
 const ProductPage = () => {
   return (
@@ -11,7 +12,8 @@ const ProductPage = () => {
       <ProductDetail />
       <ProductInformation />
       <RelatedProducts />
-      <BottomNavigation />
+      {/* <BottomNavigation /> */}
+       <MainMobileMenu />
     </Suspense>
   );
 };
