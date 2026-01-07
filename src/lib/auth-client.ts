@@ -290,7 +290,7 @@ function createAuthClient(): AxiosInstance {
                 } else if (error.message) {
                     message = typeof error.message === 'string' ? error.message : String(error.message);
                 }
-                toast.error(message);
+                // toast.error(message);
             }
 
             // Create normalized error with string message
