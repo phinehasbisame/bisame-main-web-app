@@ -7,6 +7,7 @@ import ReviewActions from "./ReviewActions";
 
 import useSWR from "swr";
 import { Review } from "./types";
+import { useProductReviewsData } from "../ProductDetails/hooks/useProductReviewsData";
 
 interface ProductLike {
   image?: string;
@@ -27,11 +28,33 @@ interface ReviewItemProps {
 }
 
 const ReviewItem: React.FC<ReviewItemProps> = ({ review, onLikeToggle }) => {
-  const { mutate } = useSWR("/api/Dashboard/Reviews");
+  // const { mutate } = useSWR("/api/Dashboard/Reviews");
+  const {
+    data,
+    loading,
+    error,
+    refetch,
+    loadMore,
+    isReachingEnd,
+    isValidating,
+  } = useProductReviewsData(review.reviewid);
 
   const handleReplySuccess = () => {
-    mutate();
+    refetch();
   };
+
+  console.log(review)
+  console.log(review)
+  console.log(review)
+  console.log(review)
+  console.log(review)
+  console.log(review)
+  console.log(review)
+  console.log(review)
+  console.log(review)
+  console.log(review)
+  console.log(review)
+  console.log(review)
 
   return (
     <li className="px-3 py-3 md:px-6 md:py-6 hover:bg-gray-50 transition-colors duration-200 shadow">

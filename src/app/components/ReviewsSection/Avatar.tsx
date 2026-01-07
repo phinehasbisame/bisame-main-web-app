@@ -18,7 +18,7 @@ function isExternalUrl(url: string) {
 
 // This Avatar component is used for both customer and seller avatars in the review chat UI.
 const Avatar: React.FC<AvatarProps> = ({ name, avatar }) => {
-  const fallback = '/Avatar1.png';
+  const fallback = '/profile.jpeg';
   const formattedAvatar = avatar && avatar.trim() !== '' ? getImageUrl(avatar, 48, 48) : fallback;
   const [imgSrc, setImgSrc] = useState(formattedAvatar);
 
