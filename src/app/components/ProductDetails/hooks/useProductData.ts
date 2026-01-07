@@ -55,11 +55,11 @@ export interface Product {
 
 // Fetcher function using the new API client
 const fetcher = async (url: string) => {
-  const token = tokenManager.getToken();
+  // const token = tokenManager.getToken();
   const response = await httpClient.get<{ code: number; data: Product }>(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    // headers: {
+    //   Authorization: `Bearer ${token}`,
+    // },
   });
   return response.data;
 };
