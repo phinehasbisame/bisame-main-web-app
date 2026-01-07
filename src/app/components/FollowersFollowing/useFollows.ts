@@ -57,9 +57,9 @@ export function useFollows() {
       const payload: FollowRequest = {
         toUserId: userid,
       };
-      
+
       const data = await authPost<FollowApiResponse>(url, payload);
-      
+
       if (data.code === 200 && data.data) {
         const successResponse: FollowsResponse = {
           success: true,
@@ -89,5 +89,47 @@ export function useFollows() {
     }
   };
 
-  return { follow, loading, error, response };
+  const unfollow = async (userId: string) => {
+    setLoading(true);
+    setError(null);
+    setResponse(null);
+    try {
+      const url = buildListingsUrl(FOLLOW_ENDPOINTS.unfollow);
+      const payload: FollowRequest = {
+        toUserId: userId,
+      };
+
+
+      const data = await authPost<FollowApiResponse>(url, payload);
+
+      if (data.code === 200 && data.data) {
+        const successResponse: FollowsResponse = {
+          success: true,
+          message: data.message || "Unfollowed successfully",
+          data: data.data,
+        };
+        setResponse(successResponse);
+        return successResponse;
+      } else {
+        throw new Error(data.message || "Failed to unfollow user");
+      }
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : typeof err === "string"
+          ? err
+          : JSON.stringify(err);
+      setError(message || "Unknown error");
+      const errorResponse: FollowsResponse = {
+        success: false,
+        message: message || "Unknown error",
+      };
+      return errorResponse;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { follow, unfollow, loading, error, response };
 }

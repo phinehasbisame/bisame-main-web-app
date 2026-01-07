@@ -118,7 +118,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
     group
   );
 
-  // NOTE: Reset attributes when group or service changes
+
   useEffect(() => {
     if (newSelectedService?.category || newSelectedService?.subcategory) {
       // When service changes, clear all attributes and mark as dynamic schema
@@ -149,7 +149,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
     }
   }, [group]);
 
-  // **Handle dynamic attribute changes - store in separate state**
+  // Handle dynamic attribute changes - store in separate state
   const handleDynamicAttributeChange = (field: string, value: string) => {
     setDynamicAttributes((prev) => ({
       ...prev,

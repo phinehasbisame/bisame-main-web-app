@@ -94,7 +94,6 @@ const ProductDetail: FC = () => {
     );
   }
 
-  console.log(product);
 
   return (
     <div className="px-6 md:px-8 lg:px-16 xl:px-24 2xl:px-56 sm:py-6 md:py-8">

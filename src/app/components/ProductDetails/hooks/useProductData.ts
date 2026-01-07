@@ -1,7 +1,13 @@
 "use client";
 
 import useSWR from "swr";
-import { httpClient, buildListingsUrl, LISTINGS_ENDPOINTS, replacePathParams } from "@/lib";
+import {
+  httpClient,
+  buildListingsUrl,
+  LISTINGS_ENDPOINTS,
+  replacePathParams,
+  tokenManager,
+} from "@/lib";
 
 export interface Product {
   _id: string;
@@ -49,35 +55,38 @@ export interface Product {
 
 // Fetcher function using the new API client
 const fetcher = async (url: string) => {
-  const response = await httpClient.get<{ code: number; data: Product }>(url);
+  const token = tokenManager.getToken();
+  const response = await httpClient.get<{ code: number; data: Product }>(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return response.data;
 };
 
 export const useProductData = (listingId: string | null) => {
   // Build the URL with path parameters
-  const endpoint = listingId ? replacePathParams(LISTINGS_ENDPOINTS.details, { id: listingId }) : null;
+  const endpoint = listingId
+    ? replacePathParams(LISTINGS_ENDPOINTS.details, { id: listingId })
+    : null;
   const apiUrl = endpoint ? buildListingsUrl(endpoint) : null;
-  
+
   // Fetch listing details by ID
   const {
     data: product,
     error,
     isLoading,
     mutate,
-  } = useSWR(
-    apiUrl,
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      revalidateIfStale: false,
-      dedupingInterval: 3600000,
-      refreshInterval: 0,
-      refreshWhenHidden: false,
-      refreshWhenOffline: false,
-      shouldRetryOnError: true,
-      errorRetryCount: 3,
-    }
-  );
+  } = useSWR(apiUrl, fetcher, {
+    revalidateOnFocus: false,
+    revalidateIfStale: false,
+    dedupingInterval: 3600000,
+    refreshInterval: 0,
+    refreshWhenHidden: false,
+    refreshWhenOffline: false,
+    shouldRetryOnError: true,
+    errorRetryCount: 3,
+  });
 
   return {
     product,
