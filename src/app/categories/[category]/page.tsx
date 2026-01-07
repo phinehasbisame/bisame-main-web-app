@@ -96,8 +96,8 @@ const CategoryPage = () => {
           )}
         </div>
       </div>
-      {/* <BottomNavigation activeTab="categories" /> */}
-       <MainMobileMenu />
+      <BottomNavigation activeTab="categories" />
+       {/* <MainMobileMenu /> */}
     </div>
   );
 };
