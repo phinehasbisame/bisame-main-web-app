@@ -139,9 +139,9 @@ const KeyProductDropdown: React.FC<KeyServiceDropdownProps> = ({
         <span className="flex flex-nowrap gap-1 items-center max-w-full overflow-hidden">
           {selectedServices && selectedServices.length > 0 ? (
             <>
-              {selectedServices.slice(0, 4).map((service) => (
+              {selectedServices.slice(0, 4).map((service, index: number) => (
                 <span
-                  key={service}
+                  key={index}
                   className="flex items-center bg-orange-100 text-orange-700 border border-orange-300 rounded-full px-2 py-0.5 text-xs mr-1 whitespace-nowrap max-w-[90px] overflow-hidden text-ellipsis"
                   style={{ maxWidth: "90px" }}
                 >
@@ -197,9 +197,9 @@ const KeyProductDropdown: React.FC<KeyServiceDropdownProps> = ({
       </button>
       {data && data?.length > 0 && openDropdown && (
         <div className="absolute z-10 w-full mt-1 bg-white border border-blue-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
-          {data.map((service: string) => (
+          {data.map((service: string, index: number) => (
             <label
-              key={service}
+              key={index}
               className="flex items-center px-4 py-2 hover:bg-orange-50 cursor-pointer"
             >
               <input

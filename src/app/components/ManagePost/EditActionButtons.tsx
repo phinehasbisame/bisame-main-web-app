@@ -1,46 +1,79 @@
-"use client";
-
+import React from "react";
 import { LuLoaderCircle } from "react-icons/lu";
+import { CheckCircle } from "lucide-react";
 
 interface EditActionButtonsProps {
   onCancel: () => void;
+  showSuccess: boolean;
   isSubmitting: boolean;
   isUploading: boolean;
-  showSuccess: boolean;
 }
 
-const EditActionButtons = ({
+const EditActionButtons: React.FC<EditActionButtonsProps> = ({
   onCancel,
+  showSuccess,
   isSubmitting,
   isUploading,
-  showSuccess,
-}: EditActionButtonsProps) => {
+}) => {
+  const isDisabled = isSubmitting || isUploading;
+
+  const buttonLabel = showSuccess
+    ? "Product Updated"
+    : isSubmitting
+    ? "Updating Product"
+    : isUploading
+    ? "Uploading Assets"
+    : "Update Product";
+
   return (
-    <div className="flex gap-4 mt-8">
+    <div className="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
+      {/* Cancel */}
       <button
         type="button"
         onClick={onCancel}
-        className="flex-1 px-4 py-2 rounded bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
-        disabled={isSubmitting || isUploading}
+        disabled={isDisabled}
+        className="
+          px-6 py-2.5 rounded-lg
+          border border-gray-300
+          text-gray-700 bg-white
+          hover:bg-gray-50
+          disabled:opacity-50 disabled:cursor-not-allowed
+          transition-all font-medium
+        "
       >
         Cancel
       </button>
+
+      {/* Primary Action */}
       <button
         type="submit"
-        className="flex-1 px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 font-semibold transition-colors flex items-center justify-center disabled:bg-gray-400 disabled:cursor-not-allowed"
-        disabled={isSubmitting || isUploading}
+        disabled={isDisabled || showSuccess}
+        className={`
+          px-6 py-2.5 min-w-[160px]
+          rounded-lg font-semibold
+          flex items-center justify-center gap-2
+          text-white transition-all
+          shadow-md hover:shadow-lg
+          ${
+            showSuccess
+              ? "bg-green-600 cursor-default"
+              : "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"
+          }
+          disabled:opacity-60 disabled:cursor-not-allowed
+        `}
       >
-        {isSubmitting || isUploading ? (
-          <span className="flex items-center">
-            <LuLoaderCircle className="w-4 h-4 animate-spin mr-2" />
-            {isUploading ? "Uploading..." : "Updating..."}
-          </span>
-        ) : showSuccess ? (
-          <span className="flex items-center">
-            <span className="mr-2">✅</span> Success!
-          </span>
+        {showSuccess ? (
+          <>
+            <CheckCircle className="w-5 h-5" />
+            <span>{buttonLabel}</span>
+          </>
+        ) : isSubmitting || isUploading ? (
+          <>
+            <LuLoaderCircle className="w-5 h-5 animate-spin" />
+            <span>{buttonLabel}</span>
+          </>
         ) : (
-          "Update Product"
+          <span>{buttonLabel}</span>
         )}
       </button>
     </div>

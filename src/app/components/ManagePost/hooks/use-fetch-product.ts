@@ -28,10 +28,8 @@ const useFetchEditProductById = <T = unknown>(
 
   // Memoized fetcher function
   const fetcher = useCallback(
-    async (url: string): Promise<ListingDetailsResponse<T>> => {
-      if (!productId) {
-        throw new Error("Product ID is required");
-      }
+    async (url: string): Promise<ListingDetailsResponse<T> | null> => {
+      if (!productId) return null
 
       try {
         const res: AxiosResponse<ListingDetailsResponse<T>> =
@@ -41,24 +39,6 @@ const useFetchEditProductById = <T = unknown>(
           throw new Error("No response data from server");
         }
 
-        console.log(res.data);
-        console.log(res.data);
-        console.log(res.data);
-        console.log(res.data);
-        console.log(res.data);
-        console.log(res.data);
-        console.log(res.data);
-        console.log(res.data);
-        console.log(res.data);
-        console.log(res.data);
-        console.log(res.data);
-        console.log(res.data);
-        console.log(res.data);
-        console.log(res.data);
-        console.log(res.data);
-        console.log(res.data);
-        console.log(res.data);
-        console.log(res.data);
         return res.data;
       } catch (error: any) {
         // Re-throw with more context
@@ -77,7 +57,7 @@ const useFetchEditProductById = <T = unknown>(
     error,
     isLoading: isLoadingProduct,
     mutate: refresh,
-  } = useSWR<ListingDetailsResponse<T> | T>(
+  } = useSWR<ListingDetailsResponse<T> | T | null>(
     newApiUrl, // Will be null when disabled or no productId
     fetcher,
     {

@@ -13,9 +13,10 @@ const ProductsFields = dynamic(
 );
 
 interface EditPostAttributesProps {
-  data?: unknown[];
+  data?: unknown[] | string[] | { [key: string]: unknown; message?: string | undefined };
   isDataLoading?: boolean;
-  formData: FormData | { attributes: Record<string, any> };
+  formData: Record<string, any>;
+
   requiredAttributes: string[];
   formatLabel: (key: string) => string;
   onDynamicAttributeChange: (field: string, value: string) => void;
