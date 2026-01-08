@@ -58,7 +58,7 @@ const fetcher = async (url: string) => {
   const token = tokenManager.getToken();
   const response = await httpClient.get<{ code: number; data: Product }>(url, {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: token ? `Bearer ${token}` : null,
     },
   });
   return response.data;
