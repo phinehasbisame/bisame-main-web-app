@@ -54,20 +54,11 @@ const EditActionButtons: React.FC<EditActionButtonsProps> = ({
           flex items-center justify-center gap-2
           text-white transition-all
           shadow-md hover:shadow-lg
-          ${
-            showSuccess
-              ? "bg-green-600 cursor-default"
-              : "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"
-          }
+          bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700
           disabled:opacity-60 disabled:cursor-not-allowed
         `}
       >
-        {showSuccess ? (
-          <>
-            <CheckCircle className="w-5 h-5" />
-            <span>{buttonLabel}</span>
-          </>
-        ) : isSubmitting || isUploading ? (
+        {isSubmitting || isUploading ? (
           <>
             <LuLoaderCircle className="w-5 h-5 animate-spin" />
             <span>{buttonLabel}</span>

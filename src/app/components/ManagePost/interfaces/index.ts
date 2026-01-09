@@ -1,24 +1,25 @@
 import { Product } from "../types";
+import { Group } from "../utils/use-edit-post-category";
 
 export interface UpdateProductProps {
-  id: string;
+  // id: string;
   title: string;
   description: string;
   price: number;
-  location: string;
+  city: string;
+  region: string;
+  // location: string;
   category: string;
   subCategory: string;
-  childCategory: string | null;
+  // childCategory: string | null;
   contactNumber: string;
-  images: Array<{ imageUrl: string; id: string }>;
-  isPromoted: boolean;
+  images: Array<{ imageUrl: string; id: string }> | string[];
+  categoryGroup: Group;
   negotiable: boolean;
-  attributes: {
-    [key: string]: unknown;
-  };
   uploadimage?: {
     image: string[];
   };
+  // [key: string]: unknown;
 }
 
 export interface ProductImage {
@@ -75,21 +76,21 @@ export interface ImageItem {
 }
 
 export interface UpdateProductProps {
-  id: string;
+  // id: string;
   title: string;
   description: string;
   price: number;
-  location: string;
+  city: string;
+  region: string;
+  // location: string;
   category: string;
   subCategory: string;
-  childCategory: string | null;
+  // childCategory: string | null;
+  categoryGroup: Group;
   contactNumber: string;
-  images: Array<{ imageUrl: string; id: string }>;
-  isPromoted: boolean;
+  images: Array<{ imageUrl: string; id: string }> | string[];
   negotiable: boolean;
-  attributes: {
-    [key: string]: unknown;
-  };
+  [key: string]: unknown;
 }
 
 export interface ProductImage {

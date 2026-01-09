@@ -17,7 +17,7 @@ interface PostCardProps {
   onImageError: (productId: string) => void;
   onClose: (productId: string) => void;
   onCancel: () => void;
-  onUpdateProduct: (reqBody: UpdateProductProps) => void;
+  onUpdateProduct: (reqBody: UpdateProductProps, listingId: string) => void;
 }
 
 const PostCard: React.FC<PostCardProps> = ({

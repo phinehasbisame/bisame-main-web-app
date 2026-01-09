@@ -10,13 +10,13 @@ import { useState, useEffect, memo } from "react";
 import toast from "react-hot-toast";
 import EditProductModalProvider from "./EditProductModal";
 import { usePostUpdateFetch } from "./usePostUpdateFetch";
-import { usePostUpdatePost } from "./usePostUpdatePost";
+import { UpdatePostRequest, usePostUpdatePost } from "./usePostUpdatePost";
 import { useMyPostDataStatus } from "./useMyPostDataStatus";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
 
 const UpdateProducts = () => {
-  const { data, loading, error } = useMyPostData("Update");
+  const { data, loading, error } = useMyPostData("Updated");
   const updateProducts: Product[] = data?.results || [];
 
   const [imgSrcMap, setImgSrcMap] = useState<Record<string, string>>({});
@@ -51,24 +51,11 @@ const UpdateProducts = () => {
     setEditingProductId(productId);
     setEditModalOpen(true);
   };
-  const handleUpdateProduct = (reqBody: {
-    id: string;
-    title: string;
-    description: string;
-    price: number;
-    location: string;
-    category: string;
-    subCategory: string;
-    childCategory: string | null;
-    contactNumber: string;
-    images: Array<{ imageUrl: string; id: string }>;
-    isPromoted: boolean;
-    negotiable: boolean;
-    attributes: {
-      [key: string]: unknown;
-    };
-  }) => {
-    updatePost(reqBody);
+  const handleUpdateProduct = (
+    reqBody: UpdatePostRequest,
+    listingId: string
+  ) => {
+    updatePost({ body: reqBody, id: listingId });
   };
   const handleCancelEdit = () => {
     setEditModalOpen(false);
@@ -220,8 +207,7 @@ const UpdateProducts = () => {
                 <p className="text-orange-500 font-semibold mt-2">
                   {product.price == 0
                     ? "Contact for price"
-                    : `₵${product?.price}`}{" "}
-                  ₵{product.price}
+                    : `GH₵ ${product?.price}`}
                 </p>
                 {/* Edit and Close buttons */}
                 <div className="flex justify-between items-center mt-3">

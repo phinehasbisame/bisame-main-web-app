@@ -34,6 +34,7 @@ const EditPostAttributes = ({
   onDynamicAttributeChange,
   onCheckboxInputChange,
 }: EditPostAttributesProps) => {
+
   return (
     <>
       {data?.length == 0 ? (

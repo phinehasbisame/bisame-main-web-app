@@ -47,7 +47,7 @@ export interface EditProductModalProps {
   product?: Product | null;
   loading?: boolean;
   error?: unknown;
-  onUpdate: (payload: UpdateProductProps) => void;
+  onUpdate: (payload: UpdateProductProps, listingId: string) => void;
   onCancel: () => void;
   userName?: string;
 }
@@ -84,9 +84,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
       productData: productData,
     });
 
-  const [group, setGroup] = useState<Group>(
-    (formData?.categoryGroup as Group) || "Buy and Sell"
-  );
+  const [group, setGroup] = useState<Group>(formData?.categoryGroup as Group);
 
   // Track dynamic schema state
   const [isDynamicSchema, setIsDynamicSchema] = useState(false);
@@ -104,12 +102,9 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
   } = useEditPostForm();
 
   // Fetch dynamic form options
-  const { data: fetchFormOptions, isLoadingForm } = useFetchEditFormOptions<FormOptions[]>(
-    id,
-    newSelectedService?.category,
-    newSelectedService?.subcategory,
-    group
-  );
+  const { data: fetchFormOptions, isLoadingForm } = useFetchEditFormOptions<
+    FormOptions[]
+  >(id, newSelectedService?.category, newSelectedService?.subcategory, group);
 
   // Image upload setup
   const { uploadImages } = useImageUpload({ userName });
@@ -236,39 +231,53 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
         ? dynamicAttributes
         : formData.attributes || {};
 
+      // Logic to get region and city separately
+      const [region, city] = formData.location
+        .split(",")
+        .map((part) => part.trim());
+
       // Build update payload
       const reqBody: UpdateProductProps = {
-        id,
         title: formData.title || formData.name,
         description: formData.description,
         price: Number(formData.price) || 0,
-        location: newSelectedLocation.city || formData.location,
+        city: newSelectedLocation.city == "" ? city : newSelectedLocation.city,
+        region:
+          newSelectedLocation.region == ""
+            ? region
+            : newSelectedLocation.region,
+        // location: newSelectedLocation.city || formData.location,
+        categoryGroup: (formData.categoryGroup as unknown as Group) ?? group,
         category: newSelectedService?.category || formData.category || "",
         subCategory:
           newSelectedService?.subcategory || formData.subCategory || "",
-        childCategory: formData.childCategory || null,
         contactNumber: formData.contactNumber || "",
-        images: imageUrls.map((url, index) => ({
-          imageUrl: url,
-          id: `image-${index}`,
-        })),
-        isPromoted: false,
+        images: imageUrls.map((url) => url),
         negotiable:
           typeof formData.negotiable === "boolean"
             ? formData.negotiable
             : formData.negotiable === "true",
-        attributes: finalAttributes,
+        ...finalAttributes,
       };
 
-      await onUpdate(reqBody);
+      console.log(reqBody);
+      console.log(reqBody);
+      console.log(reqBody);
+      console.log(reqBody);
+      console.log(reqBody);
+      try {
+        await onUpdate(reqBody, id);
+        toast.success("Product updated successfully!");
+        // window.location.reload()
+        setShowSuccess(true);
+      } catch (error) {
+        toast.success("Error occurred posting listings!");
+      }
 
-      setShowSuccess(true);
-      toast.success("Product updated successfully!");
-
-      setTimeout(() => {
-        setShowSuccess(false);
-        onCancel();
-      }, 1200);
+      // setTimeout(() => {
+      //   setShowSuccess(false);
+      //   onCancel();
+      // }, 1200);
     } catch (error) {
       console.error("Update error:", error);
       toast.error("Failed to update product.");
@@ -280,6 +289,9 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
   const onPickImage = useCallback((): void => {
     imageRef.current?.click();
   }, []);
+
+  console.log("isDynamicSchema: " + isDynamicSchema);
+  console.log("attributes: " + formData?.attributes);
 
   if (!isOpen) return null;
 
@@ -403,7 +415,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
             </label>
             <select
               className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
-              value={group ?? formData.categoryGroup}
+              value={group}
               onChange={(event) => {
                 setGroup(event.target.value as Group);
                 handleClearService();

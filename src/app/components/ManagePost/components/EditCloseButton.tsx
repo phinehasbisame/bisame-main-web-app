@@ -1,6 +1,6 @@
 "use client";
 import { useCallback } from "react" ;
-import { FaEdit } from "react-icons/fa";
+import { FaEdit, FaTimes } from "react-icons/fa";
 import { MdOutlineDelete } from "react-icons/md";
 import useActivatePosts from "../hooks/use-change-post-status";
 import Swal from "sweetalert2";
@@ -88,11 +88,11 @@ const EditCloseButton: React.FC<EditCloseButtonProps> = ({
       {/* <button
         onClick={() => newActivate(id)}
         className="flex items-center text-red-600 hover:text-red-800 text-xs font-semibold transition-colors duration-200"
-      > */}
-        {/* <FaTimes className="mr-1" size={12} /> */}
-        {/* <MdOutlineDelete className="mr-1" size={12} />
+      >
+        <FaTimes className="mr-1" size={12} />
+        <MdOutlineDelete className="mr-1" size={12} />
         Delete
-      </button> */}
+      </button>  */}
     </div>
   );
 };

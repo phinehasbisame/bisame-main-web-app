@@ -1,8 +1,6 @@
 "use client";
 import { useMyPostData } from "./useMyPostData";
-import { getImageUrl } from "../ProductDetails/utils/imageUtils";
-import { getFirstImageUrl } from "./utils/imageHelper";
-import { memo, useCallback, useState } from "react";
+import { memo, useState } from "react";
 import ErrorPage from "./components/ErrorPage";
 import NoProductFound from "./components/NoProductFound";
 import LoadingPage from "./components/LoadingPage";
@@ -10,12 +8,14 @@ import PostCard from "./components/PostCard";
 import CardContainer from "./components/CardContainer";
 import { usePostContext } from "./context/PostContext";
 import { Product } from "./types";
-import useActivatePosts from "./hooks/use-change-post-status";
-import { usePostUpdatePost } from "./usePostUpdatePost";
-import { UpdateProductProps } from "./interfaces";
+import { UpdatePostRequest, usePostUpdatePost } from "./usePostUpdatePost";
 
 const ReviewProducts = () => {
-  const { data, loading: isEditLoading, error: editProductError } = useMyPostData("Reviewing");
+  const {
+    data,
+    loading: isEditLoading,
+    error: editProductError,
+  } = useMyPostData("Reviewing");
   const reviewProducts: Product[] = data?.results || [];
 
   const {
@@ -25,7 +25,7 @@ const ReviewProducts = () => {
     handleCloseModal,
     handleEditProductId,
   } = usePostContext();
-   const { updatePost, result: updateResult } = usePostUpdatePost();
+  const { updatePost, result: updateResult } = usePostUpdatePost();
 
   const [imgSrcMap, setImgSrcMap] = useState<Record<string, string>>({});
 
@@ -48,8 +48,11 @@ const ReviewProducts = () => {
     setImgSrcMap((prev) => ({ ...prev, [productId]: "/f4.png" }));
   };
 
-  const handleUpdateProduct = (reqBody: UpdateProductProps) => {
-    updatePost(reqBody);
+  const handleUpdateProduct = (
+    reqBody: UpdatePostRequest,
+    listingId: string
+  ) => {
+    updatePost({ body: reqBody, id: listingId });
     // Do not close modal here; wait for updateResult.success
   };
 

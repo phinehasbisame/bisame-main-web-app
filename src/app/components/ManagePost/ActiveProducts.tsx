@@ -59,11 +59,11 @@ const ActiveProducts = () => {
     triggerEditProduct({ id: productId });
   };
 
-  const handleUpdateProduct = (reqBody: UpdateProductProps) => {
-    updatePost(reqBody);
-    // Do not close modal here; wait for updateResult.success
-    // setEditModalOpen(false);
-    // setEditingProductId(null);
+  const handleUpdateProduct = (
+    reqBody: UpdateProductProps,
+    listingId: string
+  ) => {
+    updatePost({ body: reqBody, id: listingId });
   };
 
   const handleCancelEdit = () => {
