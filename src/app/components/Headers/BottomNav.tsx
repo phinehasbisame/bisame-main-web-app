@@ -10,6 +10,7 @@ import { IoChevronDownSharp } from "react-icons/io5";
 import ChatNotification from "./ChatNotification/ChatNotification";
 import SignIn from "./sign_in";
 import CategoriesDropdown from "../Category/CategoriesDropdown";
+import CategoriesMegaPanel from "../Category/CategoryMegaPanel";
 
 interface BottomNavProps {
   onUnauthorizedChatClick?: () => void;
@@ -151,7 +152,8 @@ const BottomNav: React.FC<BottomNavProps> = ({}) => {
           ${showCategories ? "scale-y-100 opacity-100" : "scale-y-0 opacity-0"}
           `}
       >
-        <CategoriesDropdown />
+        {/* <CategoriesDropdown /> */}
+        <CategoriesMegaPanel onClose={() => {}} />
       </div>
 
       {/* Sign-in Modal */}
