@@ -19,7 +19,7 @@ const DashboardPage = () => {
           </div>
         </div>
       </div>
-      <BottomNavigation />
+      {/* <BottomNavigation /> */}
     </>
   );
 };

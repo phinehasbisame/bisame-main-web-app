@@ -11,7 +11,7 @@ const SettingsPage = () => {
           <AccountSettings />
         </div>
       </div>
-      <BottomNavigation />
+      {/* <BottomNavigation /> */}
     </>
   );
 };

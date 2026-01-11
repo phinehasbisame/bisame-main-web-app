@@ -13,7 +13,7 @@ const FollowingPage = () => {
           <MobileDashboardOptions />
         </div>
       </div>
-      <BottomNavigation />
+      {/* <BottomNavigation /> */}
     </>
   );
 };

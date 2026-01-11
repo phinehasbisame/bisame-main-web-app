@@ -13,7 +13,7 @@ const SavedProductsPage = () => {
           <MobileDashboardOptions />
         </div>
       </div>
-      <BottomNavigation />
+      {/* <BottomNavigation /> */}
     </>
   );
 };

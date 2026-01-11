@@ -17,7 +17,7 @@ const MessagePage = () => {
           </ChatContextProvider>
         </div>
       </div>
-      <BottomNavigation activeTab="my-bisame" />
+      {/* <BottomNavigation activeTab="my-bisame" /> */}
     </>
   );
 };

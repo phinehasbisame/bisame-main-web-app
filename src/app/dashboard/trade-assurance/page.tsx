@@ -13,7 +13,7 @@ const TradeAssurancePage = () => {
           <MobileDashboardOptions />
         </div>
       </div>
-      <BottomNavigation />
+      {/* <BottomNavigation /> */}
     </>
   );
 };

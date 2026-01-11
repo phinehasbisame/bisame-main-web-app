@@ -13,7 +13,7 @@ const ReviewsPage = () => {
           <MobileDashboardOptions />
         </div>
       </div>
-      <BottomNavigation />
+      {/* <BottomNavigation /> */}
     </>
   );
 };

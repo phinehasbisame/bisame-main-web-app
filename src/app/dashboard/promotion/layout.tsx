@@ -23,7 +23,7 @@ const PromotionLayout = ({
           <MobileDashboardOptions />
         </div>
       </div>
-      <BottomNavigation />
+      {/* <BottomNavigation /> */}
     </>
   );
 };

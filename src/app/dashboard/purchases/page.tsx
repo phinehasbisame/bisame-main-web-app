@@ -13,7 +13,7 @@ const purchasesPage = () => {
           <MobileDashboardOptions />
         </div>
       </div>
-      <BottomNavigation />
+      {/* <BottomNavigation /> */}
     </>
   );
 };
