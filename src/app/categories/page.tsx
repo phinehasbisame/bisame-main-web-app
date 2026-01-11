@@ -44,8 +44,8 @@ const CategoriesPage: React.FC = () => {
           </p>
         </div>
       </main>
-      <BottomNavigation activeTab="categories" />
-      {/* <MainMobileMenu /> */}
+      {/* <BottomNavigation activeTab="categories" /> */}
+      <MainMobileMenu />
     </div>
   );
 };

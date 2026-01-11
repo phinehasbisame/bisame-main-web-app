@@ -18,8 +18,8 @@ export default function Home() {
       <LatestListings />
       <TrendingProducts />
       {/* <CategorySection /> */}
-      <BottomNavigation activeTab="home" /> 
-      {/* <MainMobileMenu /> */}
+      {/* <BottomNavigation activeTab="home" />  */}
+      <MainMobileMenu />
     </>
   );
 }

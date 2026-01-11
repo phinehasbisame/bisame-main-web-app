@@ -48,8 +48,8 @@ const PostsPage: React.FC = () => {
           </p>
         </div>
       </main>
-      <BottomNavigation activeTab="post" />
-       {/* <MainMobileMenu /> */}
+      {/* <BottomNavigation activeTab="post" /> */}
+       <MainMobileMenu />
     </div>
   );
 };
