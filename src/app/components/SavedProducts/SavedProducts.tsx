@@ -9,6 +9,7 @@ import ProductsHeader from "./SavedProductsHeader";
 const SavedProducts: React.FC = () => {
   const { data, loading, error } = useSavedData();
 
+
   const products: SavedProduct[] = data?.products ?? [];
 
   const handleProductClick = (productId: string, e: React.MouseEvent) => {

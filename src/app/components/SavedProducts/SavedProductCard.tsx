@@ -61,6 +61,8 @@ const SavedProductCard: React.FC<SavedProductCardProps> = ({
     setImgSrc("/f4.png");
   };
 
+  console.log(product);
+
   const handleDelete = async () => {
     const result = await Swal.fire({
       title: "Are you sure?",
@@ -94,9 +96,7 @@ const SavedProductCard: React.FC<SavedProductCardProps> = ({
     >
       {/* Image Container */}
       <Link
-        href={`/ProductDetails?id=${encodeURIComponent(
-          product.id as string
-        )}`}
+        href={`/ProductDetails?id=${encodeURIComponent(product.id as string)}`}
         className="relative group"
       >
         <Image

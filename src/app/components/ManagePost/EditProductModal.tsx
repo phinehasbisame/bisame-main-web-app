@@ -84,9 +84,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
       productData: productData,
     });
 
-  const [group, setGroup] = useState<Group>(
-    (formData?.categoryGroup as Group) || "Buy and Sell"
-  );
+  const [group, setGroup] = useState<Group>(formData?.categoryGroup as Group);
 
   // Track dynamic schema state
   const [isDynamicSchema, setIsDynamicSchema] = useState(false);
@@ -408,7 +406,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
             </label>
             <select
               className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
-              value={group}
+              value={group ?? formData.categoryGroup}
               onChange={(event) => {
                 setGroup(event.target.value as Group);
                 handleClearService();

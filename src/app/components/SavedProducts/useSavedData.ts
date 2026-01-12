@@ -103,7 +103,7 @@ function mapToSavedProductArray(
       const primaryId = item.favoriteId || item._id || item.id || "";
 
       return {
-        id: primaryId, // This is the listing ID that should match what you pass to useSave
+        id: item.id as string, // This is the listing ID that should match what you pass to useSave
         favoriteId: item.favoriteId || item._id || item.id, // Keep favoriteId for deletion
         pageid: item.pageid,
         name: item.title || item.name || "",
@@ -112,8 +112,8 @@ function mapToSavedProductArray(
           typeof item.price === "number"
             ? item.price
             : typeof item.price === "string"
-              ? parseFloat(item.price) || 0
-              : 0,
+            ? parseFloat(item.price) || 0
+            : 0,
         rating: item.rating || 0,
         reviews: item.reviews || 0,
         location: item.location || "",
@@ -126,9 +126,9 @@ function mapToSavedProductArray(
         updatedAt: item.updatedAt,
         badge: item.badge
           ? {
-            text: item.badge.text || "",
-            color: item.badge.color || "#FFD700",
-          }
+              text: item.badge.text || "",
+              color: item.badge.color || "#FFD700",
+            }
           : undefined,
       };
     });
@@ -153,6 +153,11 @@ export function useSavedData() {
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
   });
+
+  console.log(data);
+  console.log(data);
+  console.log(data);
+  console.log(data);
 
   let mapped: SavedResponse | null = null;
 
