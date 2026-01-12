@@ -24,7 +24,7 @@ const CustomerSupportPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50/30 to-orange-100/50">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-12 max-w-2xl">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent mb-4">
