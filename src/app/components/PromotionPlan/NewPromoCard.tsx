@@ -34,13 +34,15 @@ const statusStyles = {
   Active: "bg-green-100 text-green-600",
   Inactive: "bg-gray-100 text-gray-500",
   Expired: "bg-red-100 text-red-600",
-};
+  Pending: "bg-yellow-100 text-yellow-600",
+} as const;
 
 const statusDot = {
   Active: "bg-green-500",
   Inactive: "bg-gray-400",
   Expired: "bg-red-500",
-};
+  Pending: "bg-yellow-500",
+} as const;
 
 const NewPromoCard: React.FC<PromotionCardProps> = ({
   price,
@@ -50,6 +52,10 @@ const NewPromoCard: React.FC<PromotionCardProps> = ({
   primaryColor,
 }) => {
   const colors = colorMap[primaryColor];
+
+  console.log(promoStatus);
+  console.log(promoStatus);
+  console.log(promoStatus);
 
   return (
     <motion.div
