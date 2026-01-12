@@ -158,7 +158,7 @@ const FollowersFollowing: React.FC = () => {
 
         {/* Tab Content */}
         <div
-          className="p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 transition-all duration-300 ease-in-out"
+          className="p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 transition-all duration-300 ease-in-out min-h-[50vh]"
           role="tabpanel"
           tabIndex={0}
         >
