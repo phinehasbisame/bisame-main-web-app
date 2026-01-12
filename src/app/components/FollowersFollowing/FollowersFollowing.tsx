@@ -110,7 +110,7 @@ const FollowersFollowing: React.FC = () => {
   }
 
   return (
-    <div className="bg-white flex items-center justify-center">
+    <div className="bg-white flex items-center justify-center min-h-[50vh]">
       <div className="max-w-7xl w-full">
         <ProductsHeader
           header="Followers"
