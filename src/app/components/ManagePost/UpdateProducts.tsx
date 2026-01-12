@@ -6,7 +6,7 @@ import { Product } from "./types";
 import { useMyPostData } from "./useMyPostData";
 import { useState, useEffect, memo, useCallback } from "react";
 import toast from "react-hot-toast";
-import EditProductModalProvider from "./EditProductModal";
+import EditProductModalProvider, { NewProduct } from "./EditProductModal";
 import { usePostUpdateFetch } from "./usePostUpdateFetch";
 import { UpdatePostRequest, usePostUpdatePost } from "./usePostUpdatePost";
 import { useMyPostDataStatus } from "./useMyPostDataStatus";
@@ -217,7 +217,7 @@ const UpdateProducts = () => {
       <EditProductModalProvider
         id={editProduct?.id as string}
         isOpen={editModalOpen}
-        product={editProduct}
+        product={editProduct as NewProduct}
         // postUpdateInfo={editingProductData}
         loading={editingProductLoading}
         error={editingProductError}

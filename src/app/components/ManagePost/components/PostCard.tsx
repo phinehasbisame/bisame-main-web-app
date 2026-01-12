@@ -3,7 +3,7 @@ import React from "react";
 import EditCloseButton from "./EditCloseButton";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { Product } from "../types";
-import EditProductModalProvider from "../EditProductModal";
+import EditProductModalProvider, { NewProduct } from "../EditProductModal";
 import { UpdateProductProps } from "../interfaces";
 
 interface PostCardProps {
@@ -83,7 +83,7 @@ const PostCard: React.FC<PostCardProps> = ({
         <EditProductModalProvider
           id={product?.id as string}
           isOpen={isOpen}
-          product={product}
+          product={product as NewProduct}
           // postUpdateInfo={editingProductData}
           loading={isEditLoading}
           error={editProductError}

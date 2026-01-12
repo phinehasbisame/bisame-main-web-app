@@ -5,7 +5,7 @@ import { FiInbox } from "react-icons/fi";
 import { Product } from "./types";
 import { useMyPostData } from "./useMyPostData";
 import { memo, useState } from "react";
-import EditProductModalProvider from "./EditProductModal";
+import EditProductModalProvider, { NewProduct } from "./EditProductModal";
 import toast from "react-hot-toast";
 import { usePostUpdateFetch } from "./usePostUpdateFetch";
 
@@ -129,7 +129,7 @@ const DeclinedProducts = () => {
       <EditProductModalProvider
         id={editProduct?.id as string}
         isOpen={editModalOpen}
-        product={editProduct}
+        product={editProduct as NewProduct}
         // postUpdateInfo={editingProductData}
         loading={editingProductLoading}
         error={editingProductError}
