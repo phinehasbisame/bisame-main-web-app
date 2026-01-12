@@ -42,7 +42,7 @@ const ClosedProducts = () => {
     }
   }, [result]);
 
-  // Enhanced activation handler with proper async handling and user feedback
+  
 
   const handleActivate = useCallback(
     async (productId: string, productName: string) => {

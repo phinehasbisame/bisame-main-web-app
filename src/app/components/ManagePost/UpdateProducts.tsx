@@ -1,12 +1,10 @@
 "use client";
 import Image from "next/image";
-import { FaEdit, FaMapMarkerAlt, FaTimes } from "react-icons/fa";
+import { FaMapMarkerAlt, FaRedo, FaTimes } from "react-icons/fa";
 import { FiInbox } from "react-icons/fi";
 import { Product } from "./types";
 import { useMyPostData } from "./useMyPostData";
-import { getImageUrl } from "../ProductDetails/utils/imageUtils";
-import { getFirstImageUrl } from "./utils/imageHelper";
-import { useState, useEffect, memo } from "react";
+import { useState, useEffect, memo, useCallback } from "react";
 import toast from "react-hot-toast";
 import EditProductModalProvider from "./EditProductModal";
 import { usePostUpdateFetch } from "./usePostUpdateFetch";
@@ -14,6 +12,7 @@ import { UpdatePostRequest, usePostUpdatePost } from "./usePostUpdatePost";
 import { useMyPostDataStatus } from "./useMyPostDataStatus";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
+import useActivatePosts from "./hooks/use-change-post-status";
 
 const UpdateProducts = () => {
   const { data, loading, error } = useMyPostData("Updated");
@@ -34,6 +33,8 @@ const UpdateProducts = () => {
     loading: statusLoading,
     error: statusError,
   } = useMyPostDataStatus();
+
+  const { refresh } = useActivatePosts("Active");
 
   useEffect(() => {
     if (updateResult && updateResult.message) {
@@ -61,21 +62,76 @@ const UpdateProducts = () => {
     setEditModalOpen(false);
     setEditingProductId(null);
   };
-  const handleClose = async (productId: string) => {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to close this product listing?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#0634ba",
-      confirmButtonText: "Yes, close it!",
-      cancelButtonText: "Cancel",
-    });
-    if (result.isConfirmed) {
-      changeStatus(productId, "Closed");
-    }
-  };
+  // const handleClose = async (productId: string) => {
+  //   const result = await Swal.fire({
+  //     title: "Are you sure?",
+  //     text: "Do you want to close this product listing?",
+  //     icon: "warning",
+  //     showCancelButton: true,
+  //     confirmButtonColor: "#d33",
+  //     cancelButtonColor: "#0634ba",
+  //     confirmButtonText: "Yes, close it!",
+  //     cancelButtonText: "Cancel",
+  //   });
+  //   if (result.isConfirmed) {
+  //     changeStatus(productId, "Closed");
+  //   }
+  // };
+
+  const handleActivate = useCallback(
+    async (productId: string, productName: string) => {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: `Do you want to reactivate "${productName}"?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#0634ba",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, reactivate!",
+        cancelButtonText: "Cancel",
+      });
+
+      if (result.isConfirmed) {
+        try {
+          Swal.fire({
+            title: "Activating...",
+            text: "Please wait while we activate your listing.",
+            icon: "info",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: () => {
+              Swal.showLoading();
+            },
+          });
+
+          await refresh(productId);
+
+          await Swal.fire({
+            title: "Success!",
+            text: `"${productName}" has been activated successfully.`,
+            icon: "success",
+            confirmButtonColor: "#0634ba",
+            timer: 2000,
+            timerProgressBar: true,
+            showConfirmButton: false,
+          });
+
+          // Reload the page after success
+          window.location.reload();
+        } catch (error) {
+          // Show error message if something goes wrong
+          await Swal.fire({
+            title: "Error!",
+            text: `Failed to activate "${productName}". Please try again.`,
+            icon: "error",
+            confirmButtonColor: "#d33",
+          });
+        }
+      }
+    },
+    [refresh]
+  );
 
   const handleImageError = (productId: string) => {
     setImgSrcMap((prev) => ({ ...prev, [productId]: "/f4.png" }));
@@ -171,26 +227,23 @@ const UpdateProducts = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
         {updateProducts.map((product) => {
-          const imgSrc =
-            imgSrcMap[product.id] ||
-            getImageUrl(getFirstImageUrl(product.image as string));
           return (
             <div
               key={product.id}
-              className="border p-2 relative transition-all duration-300 hover:bg-gray-100 hover:shadow-md hover:scale-105 cursor-pointer rounded-md"
+              className="shadow-md p-3 relative transition-all duration-300 hover:bg-gray-50 hover:shadow-md hover:scale-105 cursor-pointer h-auto flex flex-col rounded-md"
             >
               {/* Status badge */}
-              <div className="absolute top-6 right-4 z-10">
-                <span className="bg-gray-500 text-white text-xs font-semibold px-2 py-1 rounded-sm shadow">
+              <div className="absolute top-4 right-4 z-10">
+                <span className="bg-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-md shadow">
                   Update
                 </span>
               </div>
               <Image
-                src={imgSrc}
+                src={product.images[0].imageUrl}
                 alt={product.name}
                 width={150}
                 height={150}
-                className="w-full h-40 object-cover mt-2 rounded-md transition-transform duration-300 transform"
+                className="w-full h-40 object-cover rounded-md transition-transform duration-300 transform"
                 onError={() => handleImageError(product.id)}
               />
               <div className="mt-4">
@@ -212,6 +265,14 @@ const UpdateProducts = () => {
                 {/* Edit and Close buttons */}
                 <div className="flex justify-between items-center mt-3">
                   <button
+                    onClick={() => handleActivate(product.id, product.name)}
+                    className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-sm font-semibold py-2 px-4 rounded-md transition-all duration-300 transform hover:scale-105 hover:shadow-lg flex items-center justify-center group"
+                    disabled={statusLoading}
+                  >
+                    <FaRedo className="mr-2 text-xs group-hover:rotate-180 transition-transform duration-300" />
+                    {statusLoading ? "Activating..." : "Activate"}
+                  </button>
+                  {/* <button
                     onClick={() => handleEdit(product.id)}
                     className="flex items-center text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors duration-200"
                   >
@@ -225,7 +286,7 @@ const UpdateProducts = () => {
                   >
                     <FaTimes className="mr-1" size={12} />
                     {statusLoading ? "Closing..." : "Close"}
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>
