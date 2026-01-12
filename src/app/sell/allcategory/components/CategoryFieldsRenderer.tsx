@@ -306,6 +306,7 @@ const CategoryFieldsRenderer: React.FC<RendererProps> = ({
             <HealthFields
               data={healthOptions.data as any}
               formData={formData}
+              onCheckboxInputChange={handleCheckboxInputChange}
               handleInputChange={handleInputChange}
             />
           ) : null}

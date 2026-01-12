@@ -1,7 +1,6 @@
 import DashboardSideBar from "@/app/components/DashboardSideBar/DashboardSideBar";
 import Messages from "../../Messages/Messages";
 import ChatContextProvider from "@/app/Messages/context/ChatContext";
-import { BottomNavigation } from "@/app/components/BottomNavigation";
 
 // Automatically revalidate my chat messages after a period of 1 second
 export const revalidate = 1; // Telling next js to revalidate my page every second to get fresh data

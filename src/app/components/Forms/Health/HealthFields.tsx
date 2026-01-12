@@ -6,12 +6,14 @@ interface EngineFieldsProps {
   data: FormOptions[];
   formData: Record<string, string | string[] | (string | string[])[]>;
   handleInputChange: (field: string, value: string | string[]) => void;
+  onCheckboxInputChange?: (field: string, value: string[]) => void;
 }
 
 const ProductsFields: React.FC<EngineFieldsProps> = ({
   data,
   formData,
   handleInputChange,
+  onCheckboxInputChange,
 }) => {
   // const [nameCount, setNameCount] = useState({
   //   healthTitle: 0,
@@ -35,6 +37,7 @@ const ProductsFields: React.FC<EngineFieldsProps> = ({
           formData={formData}
           data={data}
           handleInputChange={handleInputChange}
+          handleCheckboxInputChange={onCheckboxInputChange}
         />
       </div>
     </div>
