@@ -81,7 +81,7 @@ const FollowersFollowing: React.FC = () => {
 
   if (error) {
     return (
-      <div className="bg-white flex items-center justify-center min-w-[50vh]">
+      <div className="bg-white flex items-center justify-center min-h-[50vh]">
         <div className="max-w-7xl w-full border border-gray-200 rounded-md shadow-sm">
           <div className="p-8 text-center">
             <div className="text-red-500 mb-4">
