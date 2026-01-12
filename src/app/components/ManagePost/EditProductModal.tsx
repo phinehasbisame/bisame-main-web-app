@@ -41,10 +41,14 @@ const getRequiredAttributes = (
   return [];
 };
 
+export interface NewProduct extends Product {
+  image?: string[];
+}
+
 export interface EditProductModalProps {
   id: string;
   isOpen: boolean;
-  product?: Product | null;
+  product?: NewProduct | null;
   loading?: boolean;
   error?: unknown;
   onUpdate: (payload: UpdateProductProps, listingId: string) => void;
@@ -106,8 +110,30 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
     FormOptions[]
   >(id, newSelectedService?.category, newSelectedService?.subcategory, group);
 
+  // Handle Image combination
+  const [updatedImages, setUpdatedImages] = useState<string[]>(
+    product?.image as unknown as string[]
+  );
+
+  const handleUpdateImage = (image: string | string[]) => {
+    if (Array.isArray(image)) {
+      setUpdatedImages((prevImages) => [...prevImages, ...image]);
+    } else {
+      setUpdatedImages((prevImages) => [...prevImages, image]);
+    }
+  };
+
+  useEffect(() => {
+    if (product) {
+      setUpdatedImages(product.image as unknown as string[]);
+    }
+  }, [product]);
+
   // Image upload setup
-  const { uploadImages } = useImageUpload({ userName });
+  const { uploadImages } = useImageUpload({
+    userName,
+    onUpdateImage: handleUpdateImage,
+  });
 
   const {
     images,
@@ -265,7 +291,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
         subCategory:
           newSelectedService?.subcategory || formData.subCategory || "",
         contactNumber: formData.contactNumber || "",
-        images: imageUrls,
+        images: updatedImages,
         negotiable:
           typeof formData.negotiable === "boolean"
             ? formData.negotiable
@@ -273,6 +299,9 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
         ...finalAttributes,
       };
 
+      console.log(reqBody)
+      console.log(reqBody)
+      console.log(reqBody)
       await onUpdate(reqBody, id);
       toast.success("Listing updated successfully!");
       setShowSuccess(true);

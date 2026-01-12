@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 export interface UnifiedImage {
   id: string;
@@ -30,6 +30,10 @@ export const useImageManager = ({
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
 
+  // Use refs to prevent duplicate uploads
+  const uploadingRef = useRef(false);
+  const errorTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const maxFileSize = maxFileSizeMB * 1024 * 1024;
 
   // Initialize images from product data
@@ -55,18 +59,28 @@ export const useImageManager = ({
     setImages(mapped);
   }, [initialImages]);
 
-  // Cleanup previews on unmount
+  // Cleanup previews and timeouts on unmount
   useEffect(() => {
     return () => {
       images.forEach((img) => {
         if (img.preview) URL.revokeObjectURL(img.preview);
       });
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
+      }
     };
   }, [images]);
 
   const handleFileSelect = useCallback(
     async (files?: FileList | null): Promise<void> => {
-      if (!files || files.length === 0 || isUploading) return;
+      // CRITICAL: Prevent duplicate uploads using ref
+      if (!files || files.length === 0 || uploadingRef.current) {
+        console.log("Upload blocked:", {
+          noFiles: !files || files.length === 0,
+          alreadyUploading: uploadingRef.current,
+        });
+        return;
+      }
 
       const fileArray = Array.from(files);
       const validFiles: File[] = [];
@@ -87,101 +101,125 @@ export const useImageManager = ({
 
       if (errors.length > 0) {
         setUploadError(errors.join("; "));
-        setTimeout(() => setUploadError(""), 5000);
+        if (errorTimeoutRef.current) clearTimeout(errorTimeoutRef.current);
+        errorTimeoutRef.current = setTimeout(() => setUploadError(""), 5000);
       }
 
       if (validFiles.length === 0) return;
 
-      const remainingSlots = maxImages - images.length;
-      const toAdd = validFiles.slice(0, remainingSlots);
+      // Check remaining slots using functional update to get latest state
+      setImages((currentImages) => {
+        const remainingSlots = maxImages - currentImages.length;
+        const toAdd = validFiles.slice(0, remainingSlots);
 
-      if (validFiles.length > remainingSlots) {
-        setUploadError(`You can only upload ${remainingSlots} more image(s).`);
-        setTimeout(() => setUploadError(""), 5000);
-      }
+        if (validFiles.length > remainingSlots) {
+          setUploadError(
+            `You can only upload ${remainingSlots} more image(s).`
+          );
+          if (errorTimeoutRef.current) clearTimeout(errorTimeoutRef.current);
+          errorTimeoutRef.current = setTimeout(() => setUploadError(""), 5000);
 
-      // Create temporary preview images
-      const tempEntries: UnifiedImage[] = toAdd.map((file) => ({
-        id: `new-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
-        file,
-        preview: URL.createObjectURL(file),
-        isMain: images.length === 0,
-        isExisting: false,
-      }));
+          if (toAdd.length === 0) return currentImages;
+        }
 
-      const updated: UnifiedImage[] = [...images, ...tempEntries].map(
-        (img, idx) => ({
-          ...img,
-          isMain: idx === 0,
-        })
-      );
-
-      setImages(updated);
-
-      // Upload to server if upload function is provided
-      if (onUpload) {
+        // Set uploading flag BEFORE creating previews
+        uploadingRef.current = true;
         setIsUploading(true);
-        try {
-          const uploadedUrls = await onUpload(toAdd);
 
-          if (uploadedUrls && uploadedUrls.length > 0) {
-            let urlIndex = 0;
-            const postUpload: UnifiedImage[] = updated.map((img) => {
-              if (
-                !img.isExisting &&
-                img.file &&
-                urlIndex < uploadedUrls.length
-              ) {
-                const url = uploadedUrls[urlIndex++];
-                return {
-                  ...img,
-                  imageUrl: url,
-                  isExisting: true,
-                };
+        // Create temporary preview images
+        const tempEntries: UnifiedImage[] = toAdd.map((file) => ({
+          id: `new-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+          file,
+          preview: URL.createObjectURL(file),
+          isMain: currentImages.length === 0,
+          isExisting: false,
+        }));
+
+        const updated: UnifiedImage[] = [...currentImages, ...tempEntries].map(
+          (img, idx) => ({
+            ...img,
+            isMain: idx === 0,
+          })
+        );
+
+        // Upload to server if upload function is provided
+        if (onUpload) {
+          // Run upload asynchronously without blocking state update
+          onUpload(toAdd)
+            .then((uploadedUrls) => {
+              if (uploadedUrls && uploadedUrls.length > 0) {
+                // Use functional update to work with latest state
+                setImages((currentImgs) => {
+                  let urlIndex = 0;
+                  return currentImgs.map((img) => {
+                    if (
+                      !img.isExisting &&
+                      img.file &&
+                      toAdd.includes(img.file) &&
+                      urlIndex < uploadedUrls.length
+                    ) {
+                      const url = uploadedUrls[urlIndex++];
+                      return {
+                        ...img,
+                        imageUrl: url,
+                        isExisting: true,
+                      };
+                    }
+                    return img;
+                  });
+                });
               }
-              return img;
+            })
+            .catch((err) => {
+              console.error("Upload error:", err);
+              setUploadError("Upload failed. Please try again.");
+              if (errorTimeoutRef.current)
+                clearTimeout(errorTimeoutRef.current);
+              errorTimeoutRef.current = setTimeout(
+                () => setUploadError(""),
+                5000
+              );
+            })
+            .finally(() => {
+              uploadingRef.current = false;
+              setIsUploading(false);
             });
-
-            setImages(postUpload);
-          }
-        } catch (err) {
-          setUploadError("Upload failed. Please try again.");
-          setTimeout(() => setUploadError(""), 5000);
-        } finally {
+        } else {
+          // No upload function, just mark as not uploading
+          uploadingRef.current = false;
           setIsUploading(false);
         }
-      }
+
+        return updated;
+      });
     },
-    [images, isUploading, maxImages, maxFileSize, maxFileSizeMB, onUpload]
+    [maxImages, maxFileSize, maxFileSizeMB, onUpload]
   );
 
-  const removeImage = useCallback(
-    (index: number): void => {
-      const removed = images[index];
+  const removeImage = useCallback((index: number): void => {
+    setImages((currentImages) => {
+      const removed = currentImages[index];
       if (removed?.preview) URL.revokeObjectURL(removed.preview);
 
-      const updated = images
+      const updated = currentImages
         .filter((_, i) => i !== index)
         .map((img, idx) => ({
           ...img,
           isMain: idx === 0,
         }));
 
-      setImages(updated);
-    },
-    [images]
-  );
+      return updated;
+    });
+  }, []);
 
-  const setMainImage = useCallback(
-    (imageId: string): void => {
-      const updated = images.map((img) => ({
+  const setMainImage = useCallback((imageId: string): void => {
+    setImages((currentImages) =>
+      currentImages.map((img) => ({
         ...img,
         isMain: img.id === imageId,
-      }));
-      setImages(updated);
-    },
-    [images]
-  );
+      }))
+    );
+  }, []);
 
   // Drag and drop handlers
   const handleDragStart = useCallback(
@@ -203,19 +241,22 @@ export const useImageManager = ({
 
       if (draggedIndex === null || draggedIndex === index) return;
 
-      const newImgs = [...images];
-      const [dragged] = newImgs.splice(draggedIndex, 1);
-      newImgs.splice(index, 0, dragged);
+      setImages((currentImages) => {
+        const newImgs = [...currentImages];
+        const [dragged] = newImgs.splice(draggedIndex, 1);
+        newImgs.splice(index, 0, dragged);
 
-      const normalized = newImgs.map((img, idx) => ({
-        ...img,
-        isMain: idx === 0,
-      }));
+        const normalized = newImgs.map((img, idx) => ({
+          ...img,
+          isMain: idx === 0,
+        }));
 
-      setImages(normalized);
+        return normalized;
+      });
+
       setDraggedIndex(index);
     },
-    [draggedIndex, images]
+    [draggedIndex]
   );
 
   const handleDrop = useCallback(
