@@ -84,7 +84,9 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
       productData: productData,
     });
 
-  const [group, setGroup] = useState<Group>(formData?.categoryGroup as Group);
+  const [group, setGroup] = useState<Group>(
+    (formData?.categoryGroup as Group) || "Buy and Sell"
+  );
 
   // Track dynamic schema state
   const [isDynamicSchema, setIsDynamicSchema] = useState(false);
@@ -134,6 +136,16 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
     maxFileSizeMB: 5,
     onUpload: uploadImages,
   });
+
+  // Initialize dynamic attributes from existing product data
+  useEffect(() => {
+    if (
+      productData?.attributes &&
+      Object.keys(productData.attributes).length > 0
+    ) {
+      setDynamicAttributes(productData.attributes);
+    }
+  }, [productData?.attributes]);
 
   // Reset attributes when category/service changes
   useEffect(() => {
@@ -226,6 +238,13 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
     try {
       const imageUrls = getImageUrls();
 
+      // Validate images
+      if (imageUrls.length === 0) {
+        toast.error("Please upload at least one image");
+        setIsSubmitting(false);
+        return;
+      }
+
       // Use dynamic attributes if in dynamic mode, otherwise use existing attributes
       const finalAttributes = isDynamicSchema
         ? dynamicAttributes
@@ -241,18 +260,14 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
         title: formData.title || formData.name,
         description: formData.description,
         price: Number(formData.price) || 0,
-        city: newSelectedLocation.city == "" ? city : newSelectedLocation.city,
-        region:
-          newSelectedLocation.region == ""
-            ? region
-            : newSelectedLocation.region,
-        // location: newSelectedLocation.city || formData.location,
+        city: newSelectedLocation.city || city || "",
+        region: newSelectedLocation.region || region || "",
         categoryGroup: (formData.categoryGroup as unknown as Group) ?? group,
         category: newSelectedService?.category || formData.category || "",
         subCategory:
           newSelectedService?.subcategory || formData.subCategory || "",
         contactNumber: formData.contactNumber || "",
-        images: imageUrls.map((url) => url),
+        images: imageUrls,
         negotiable:
           typeof formData.negotiable === "boolean"
             ? formData.negotiable
@@ -260,27 +275,17 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
         ...finalAttributes,
       };
 
-      console.log(reqBody);
-      console.log(reqBody);
-      console.log(reqBody);
-      console.log(reqBody);
-      console.log(reqBody);
-      try {
-        await onUpdate(reqBody, id);
-        toast.success("Product updated successfully!");
-        // window.location.reload()
-        setShowSuccess(true);
-      } catch (error) {
-        toast.success("Error occurred posting listings!");
-      }
+      await onUpdate(reqBody, id);
+      toast.success("Listing updated successfully!");
+      setShowSuccess(true);
 
-      // setTimeout(() => {
-      //   setShowSuccess(false);
-      //   onCancel();
-      // }, 1200);
+      setTimeout(() => {
+        setShowSuccess(false);
+        onCancel();
+      }, 1500);
     } catch (error) {
       console.error("Update error:", error);
-      toast.error("Failed to update product.");
+      toast.error("Failed to update listing. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -290,9 +295,6 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
     imageRef.current?.click();
   }, []);
 
-  console.log("isDynamicSchema: " + isDynamicSchema);
-  console.log("attributes: " + formData?.attributes);
-
   if (!isOpen) return null;
 
   if (isLoading) {
@@ -301,7 +303,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
         <div className="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 p-8 flex flex-col items-center">
           <LuLoaderCircle className="w-16 h-16 text-orange-500 animate-spin mb-4" />
           <p className="text-gray-600 text-base font-medium">
-            Loading product data...
+            Loading listing data...
           </p>
         </div>
       </div>
@@ -328,12 +330,12 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
             </svg>
           </div>
           <p className="text-red-600 font-semibold text-lg mb-2">
-            {loadError ? "Failed to load product" : "Product not found"}
+            {loadError ? "Failed to load listing" : "Listing not found"}
           </p>
           <p className="text-gray-500 text-sm text-center mb-6">
             {loadError
               ? String(loadError)
-              : "Unable to load product data. Please try again."}
+              : "Unable to load listing data. Please try again."}
           </p>
           <button
             onClick={onCancel}
@@ -358,30 +360,21 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
         className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full relative overflow-hidden flex flex-col max-h-[95vh]"
       >
         {/* Header */}
-        <div
-          className="relative flex items-center justify-between px-6 py-4 
-                bg-gradient-to-r from-blue-700 to-blue-600 
-                border-b border-blue-800/40"
-        >
-          {/* Title Section */}
+        <div className="relative flex items-center justify-between px-6 py-4 bg-gradient-to-r from-blue-700 to-blue-600 border-b border-blue-800/40">
           <div className="flex flex-col">
             <h2 className="text-xl font-semibold text-white leading-tight">
-              Edit Product
+              Edit Listing
             </h2>
             <span className="text-sm text-blue-100/80">
-              Update product details and availability
+              Update your listing details
             </span>
           </div>
 
-          {/* Close Button */}
           <button
             type="button"
             onClick={onCancel}
             aria-label="Close"
-            className="flex items-center justify-center w-10 h-10 
-               rounded-full text-white/80 
-               hover:text-white hover:bg-white/10 
-               transition-all duration-200 focus:outline-none"
+            className="flex items-center justify-center w-10 h-10 rounded-full text-white/80 hover:text-white hover:bg-white/10 transition-all duration-200 focus:outline-none"
           >
             <span className="text-2xl leading-none">&times;</span>
           </button>
@@ -411,7 +404,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Post Group
+              Listing Category
             </label>
             <select
               className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
@@ -451,7 +444,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Product Title <span className="text-red-500">*</span>
+              Listing Title <span className="text-red-500">*</span>
             </label>
             <input
               name="title"
@@ -459,7 +452,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
               required
-              placeholder="Enter product title"
+              placeholder="Enter listing title"
             />
           </div>
 
@@ -474,7 +467,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
               className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all resize-none"
               rows={4}
               required
-              placeholder="Describe your product"
+              placeholder="Describe your listing"
             />
           </div>
 
@@ -520,7 +513,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
           {group === "Services" && (
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Product Keywords
+                Service Keywords
               </label>
               <KeyProductDropdown
                 selectedServices={

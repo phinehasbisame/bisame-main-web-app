@@ -1,5 +1,4 @@
 import { memo } from "react";
-import { FormData } from "../hooks/use-product-form";
 import dynamic from "next/dynamic";
 import { FormOptions } from "../../Forms/Books/interfaces";
 import FormContext from "../../Forms/Foods/context/FormContext";
@@ -13,10 +12,9 @@ const ProductsFields = dynamic(
 );
 
 interface EditPostAttributesProps {
-  data?: unknown[] | string[] | { [key: string]: unknown; message?: string | undefined };
+  data?: unknown[] | string[] | { [key: string]: unknown; message?: string };
   isDataLoading?: boolean;
   formData: Record<string, any>;
-
   requiredAttributes: string[];
   formatLabel: (key: string) => string;
   onDynamicAttributeChange: (field: string, value: string) => void;
@@ -34,60 +32,136 @@ const EditPostAttributes = ({
   onDynamicAttributeChange,
   onCheckboxInputChange,
 }: EditPostAttributesProps) => {
+  // Check if data is an array and has items
+  const hasFormOptions = Array.isArray(data) && data.length > 0;
+
+  // Check if formData has attributes to display as legacy fields
+  const hasLegacyAttributes =
+    formData &&
+    typeof formData === "object" &&
+    Object.keys(formData).length > 0 &&
+    !hasFormOptions;
 
   return (
     <>
-      {data?.length == 0 ? (
-        formData.attributes &&
-        Object.keys(formData.attributes).length > 0 && (
-          <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">
-              Additional Information
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {Object.entries(formData.attributes).map(([key, value]) => {
-                const isRequired = requiredAttributes?.includes(key);
-                const label = formatLabel(key);
+      {hasFormOptions ? (
+        // Dynamic form with fetched options
+        <FormContext>
+          {isDataLoading ? (
+            <div className="py-8">
+              <Loader />
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Additional Details
+              </h3>
+              <ProductsFields
+                data={data as FormOptions[]}
+                formData={formData as ObjectProps}
+                handleCheckboxInputChange={onCheckboxInputChange}
+                handleInputChange={onDynamicAttributeChange}
+              />
+            </div>
+          )}
+        </FormContext>
+      ) : hasLegacyAttributes ? (
+        // Legacy attributes (existing product data without dynamic form)
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-800">
+            Additional Information
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {Object.entries(formData).map(([key, value]) => {
+              // Skip non-attribute fields
+              if (
+                [
+                  "title",
+                  "description",
+                  "price",
+                  "location",
+                  "images",
+                  "category",
+                  "subCategory",
+                  "categoryGroup",
+                ].includes(key)
+              ) {
+                return null;
+              }
 
-                // Render different input types based on the key or value type
+              const isRequired = requiredAttributes?.includes(key);
+              const label = formatLabel(key);
+
+              // Handle different value types
+              if (typeof value === "boolean") {
                 return (
-                  <div key={key} className="col-span-1">
-                    <label className="block text-sm font-semibold mb-1">
+                  <div key={key} className="col-span-1 flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      id={key}
+                      checked={value}
+                      onChange={(e) => onAttributeChange(key, e.target.checked)}
+                      className="w-5 h-5 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
+                    />
+                    <label
+                      htmlFor={key}
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
+                    >
+                      {label}
+                    </label>
+                  </div>
+                );
+              }
+
+              // Handle array values (multi-select)
+              if (Array.isArray(value)) {
+                return (
+                  <div key={key} className="col-span-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
                       {label}
                       {isRequired && (
                         <span className="text-red-500 ml-1">*</span>
                       )}
                     </label>
-
-                    {/* Text input for most fields */}
                     <input
                       type="text"
-                      value={(value as string) || ""}
-                      onChange={(e) => onAttributeChange(key, e.target.value)}
-                      className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      value={value.join(", ")}
+                      onChange={(e) => {
+                        const newValues = e.target.value
+                          .split(",")
+                          .map((v) => v.trim())
+                          .filter(Boolean);
+                        onAttributeChange(key, newValues);
+                      }}
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
+                      placeholder={`Enter ${label.toLowerCase()} (comma-separated)`}
                       required={isRequired}
-                      placeholder={`Enter ${label.toLowerCase()}`}
                     />
                   </div>
                 );
-              })}
-            </div>
+              }
+
+              // Text input for string values
+              return (
+                <div key={key} className="col-span-1">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    {label}
+                    {isRequired && <span className="text-red-500 ml-1">*</span>}
+                  </label>
+                  <input
+                    type="text"
+                    value={String(value || "")}
+                    onChange={(e) => onAttributeChange(key, e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
+                    required={isRequired}
+                    placeholder={`Enter ${label.toLowerCase()}`}
+                  />
+                </div>
+              );
+            })}
           </div>
-        )
-      ) : (
-        <FormContext>
-          {isDataLoading ? (
-            <Loader />
-          ) : data ? (
-            <ProductsFields
-              data={data as FormOptions[]}
-              formData={formData as ObjectProps}
-              handleCheckboxInputChange={onCheckboxInputChange}
-              handleInputChange={onDynamicAttributeChange}
-            />
-          ) : null}
-        </FormContext>
-      )}
+        </div>
+      ) : null}
     </>
   );
 };

@@ -17,16 +17,8 @@ const EditActionButtons: React.FC<EditActionButtonsProps> = ({
 }) => {
   const isDisabled = isSubmitting || isUploading;
 
-  const buttonLabel = showSuccess
-    ? "Product Updated"
-    : isSubmitting
-    ? "Updating Product"
-    : isUploading
-    ? "Uploading Assets"
-    : "Update Product";
-
   return (
-    <div className="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
+    <div className="flex items-center justify-end gap-4">
       {/* Cancel */}
       <button
         type="button"
@@ -54,17 +46,31 @@ const EditActionButtons: React.FC<EditActionButtonsProps> = ({
           flex items-center justify-center gap-2
           text-white transition-all
           shadow-md hover:shadow-lg
-          bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700
+          ${
+            showSuccess
+              ? "bg-green-500 cursor-default"
+              : "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"
+          }
           disabled:opacity-60 disabled:cursor-not-allowed
         `}
       >
-        {isSubmitting || isUploading ? (
+        {showSuccess ? (
+          <>
+            <CheckCircle className="w-5 h-5" />
+            <span>Updated!</span>
+          </>
+        ) : isSubmitting ? (
           <>
             <LuLoaderCircle className="w-5 h-5 animate-spin" />
-            <span>{buttonLabel}</span>
+            <span>Updating...</span>
+          </>
+        ) : isUploading ? (
+          <>
+            <LuLoaderCircle className="w-5 h-5 animate-spin" />
+            <span>Uploading Images...</span>
           </>
         ) : (
-          <span>{buttonLabel}</span>
+          <span>Update Listing</span>
         )}
       </button>
     </div>
