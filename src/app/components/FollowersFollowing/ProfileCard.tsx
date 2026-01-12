@@ -4,6 +4,7 @@ import Image from 'next/image';
 import FollowButton from './FollowButton';
 import UnfollowButton from './UnfollowButton';
 import { getImageUrl } from '../ProductDetails/utils/imageUtils';
+import { useFollows } from './useFollows';
 
 interface ProfileCardProps {
   id: string;
@@ -28,6 +29,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
 }) => {
   // Use imageUtils to get properly formatted image URL
   const formattedAvatar = avatar;
+  
 
 
   return (
@@ -44,7 +46,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
           onError={(e) => {
             // Fallback to default image if the profile image fails to load
             const target = e.target as HTMLImageElement;
-            target.src = '/follow.jpg';
+            target.src = '/profile.jpeg';
           }}
         />
         {/* Online indicator (optional) */}

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
-import { useUnfollow } from './useUnfollow';
 import toast from 'react-hot-toast';
+import { useFollows } from './useFollows';
 
 interface UnfollowButtonProps {
   onToggle?: () => Promise<void>;
@@ -17,7 +17,7 @@ const UnfollowButton: React.FC<UnfollowButtonProps> = ({
   mutate,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { unfollow } = useUnfollow();
+   const { unfollow } = useFollows();
   
   const handleClick = async () => {
     if (disabled || isLoading) return;
@@ -28,6 +28,7 @@ const UnfollowButton: React.FC<UnfollowButtonProps> = ({
         toast.success('Unfollowed successfully!');
         if (onToggle) await onToggle();
         if (mutate) await mutate(); // Refetch followers data
+        window.location.reload()
       } else {
         toast.error(res?.message || 'Failed to unfollow user');
       }
@@ -41,7 +42,7 @@ const UnfollowButton: React.FC<UnfollowButtonProps> = ({
 
   return (
     <button
-      className={`text-white text-xs font-bold px-3 py-1 rounded-sm tracking-wide transition-colors duration-200 bg-blue-600 hover:bg-blue-700 ${(disabled || isLoading) ? 'opacity-50 cursor-not-allowed' : ''}`}
+      className={`text-white text-xs font-semibold px-3 py-1 rounded-sm tracking-tighter transition-colors duration-200 bg-blue-600 hover:bg-blue-700 ${(disabled || isLoading) ? 'opacity-50 cursor-not-allowed' : ''}`}
       type="button"
       onClick={handleClick}
       disabled={disabled || isLoading}
@@ -49,7 +50,7 @@ const UnfollowButton: React.FC<UnfollowButtonProps> = ({
       {isLoading ? (
         <div className="flex items-center space-x-1">
           <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
-          <span>UNFOLLOWING...</span>
+          <span>UNFOLLOW...</span>
         </div>
       ) : (
         'UNFOLLOW'

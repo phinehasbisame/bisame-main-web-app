@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { authPost, buildListingsUrl, FOLLOW_ENDPOINTS } from "@/lib";
 
-interface FollowRequest {
+export interface FollowRequest {
   toUserId: string;
 }
 
-interface FollowResponseData {
+export interface FollowResponseData {
   id: string;
   createdAt: string;
   updatedAt: string | null;
@@ -30,13 +30,13 @@ interface FollowResponseData {
   [key: string]: unknown;
 }
 
-interface FollowApiResponse {
+export interface FollowApiResponse {
   code: number;
   data: FollowResponseData;
   message: string;
 }
 
-interface FollowsResponse {
+export interface FollowsResponse {
   success: boolean;
   message?: string;
   data?: FollowResponseData;
