@@ -14,66 +14,74 @@ import { HiOutlineHome } from "react-icons/hi";
 import { GoPlusCircle } from "react-icons/go";
 import { TiMessages } from "react-icons/ti";
 import { LuUserCheck } from "react-icons/lu";
+import { BiHome } from "react-icons/bi";
 
 export const dashboardOptions: DashboardOptions[] = [
   {
     id: 1,
+    option: "Home",
+    description: "View Homepage",
+    href: "/",
+    icon: <BiHome className="md:mr-2 text-lg" />,
+  },
+  {
+    id: 2,
     option: "Dashboard",
     description: "View Dashboard",
     href: "/dashboard",
     icon: <TfiDashboard className="md:mr-2 text-lg" />,
   },
   {
-    id: 2,
+    id: 3,
     option: "Manage Post",
     description: "My Post",
     href: "/dashboard/manage-post",
     icon: <FaClipboardList className="md:mr-2 text-lg" />,
   },
   {
-    id: 3,
+    id: 4,
     option: "Make Money",
     description: "Revenue, Withdrawal, Affiliates",
     href: "/dashboard/make-money",
     icon: <FaMoneyBillWave className="md:mr-2 text-lg" />,
   },
   {
-    id: 4,
+    id: 5,
     option: "Trade Assurance",
     description: "Order arrives just right. Coming soon",
     href: "/dashboard/trade-assurance",
     icon: <FaShieldAlt className="md:mr-2 text-lg" />,
   },
   {
-    id: 5,
+    id: 6,
     option: "Saved",
     description: "Favorite posts or products",
     href: "/dashboard/saved",
     icon: <FaBookmark className="md:mr-2 text-lg" />,
   },
   {
-    id: 6,
+    id: 7,
     option: "Promotion",
     description: "Promote your post",
     href: "/dashboard/promotion",
     icon: <FaBullhorn className="md:mr-2 text-lg" />,
   },
   {
-    id: 7,
+    id: 8,
     option: "Promotional Purchases",
     description: "Your package purchase history",
     href: "/dashboard/purchases",
     icon: <FaShoppingBag className="md:mr-2 text-lg" />,
   },
   {
-    id: 8,
+    id: 9,
     option: "Review",
     description: "Reviews from client",
     href: "/dashboard/reviews",
     icon: <FaStar className="md:mr-2 text-lg" />,
   },
   {
-    id: 9,
+    id: 10,
     option: "Followers",
     description: "Your followers",
     href: "/dashboard/followers",
