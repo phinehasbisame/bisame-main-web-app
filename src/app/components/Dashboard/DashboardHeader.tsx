@@ -122,7 +122,7 @@ const DashboardHeader = () => {
                   width={40}
                   height={40}
                   className="rounded-full border-2 border-orange-500"
-                  onError={() => setImgSrc("/newUser.png")}
+                  onError={() => setImgSrc("/profile.jpeg")}
                 />
               )}
               <div className="text-left flex-1 hidden sm:block">
